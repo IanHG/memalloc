@@ -1,9 +1,9 @@
-CXX=g++
-CXXSTD=--std=c++14
+CXX=icpc
+CXXSTD=--std=c++11
 CXXFLAGS=-Wall
 CXXOPTIMFLAGS=-O3
 CXXDEBUGFLAGS=-g -O0
-CXXFLAGS=$(CXXDEBUGFLAGS)
+CXXFLAGS=$(CXXOPTIMFLAGS)
 LIBS=
 
 # find source files
@@ -20,9 +20,12 @@ main.x: $(OBJECTS)
 -include $(OBJECTS:.o=.d)
 
 # compile and generate dependency info
-%.o: %.cpp
+%.o: %.cpp %.d
 	$(CXX) $(CXXSTD) -c $(CXXFLAGS) $*.cpp -o $*.o
 	$(CXX) $(CXXSTD) -MM $(CXXFLAGS) $*.cpp > $*.d
+
+# empty rule for dependency files
+%.d: ;
 
 clean:
 	rm -f *core *.o *.d *.x
