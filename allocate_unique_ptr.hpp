@@ -18,7 +18,10 @@ struct decay_type<T[]>
    using type = T;
 };
 
-template<class T, class Alloc>
+template
+   <  class T
+   ,  class Alloc
+   >
 struct deleter
 {
    Alloc& alloc;

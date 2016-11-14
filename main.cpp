@@ -76,11 +76,12 @@ class test_lol
 
 int main()
 {
-   timer t;
    memalloc::allocator<double> alloc;
    //memalloc::allocator<double, memalloc::mempool_alloc_policy<double> > alloc2;
    memalloc::allocator<double, memalloc::mempool_alloc_policy<double> > alloc2;
-   int n = 100000;
+   decltype(alloc2)::template rebind<test_lol<double> >::other alloc3;
+   int n = 100;
+   int nrepeat = 1;
    double* ptr;
    int size = 10000;
    
@@ -99,21 +100,28 @@ int main()
 
    //sptr[0] = 3.3333;
    //std::cout << sptr[0] << std::endl;
-
-   for(int i = 0; i < n; ++i)
+   
+   for(int irepeat = 0; irepeat < nrepeat; ++irepeat)
    {
-      t.start();
-      test_lol<double, memalloc::mempool_allocator<double> > test(size);
-      //test_lol<double> test(size);
-      //deleted_unique_ptr<double, decltype(alloc)> ptr(size);
-      //ptr = alloc.allocate(size);
-      //alloc.deallocate(ptr, size);
-      //ptr = new double[size];
-      //delete[] ptr;
-      t.stop();
+      timer t;
+      for(int i = 0; i < n; ++i)
+      {
+         t.start();
+         //auto sptr = memalloc::allocate_unique_ptr<double[]>(alloc, size);
+         auto sptr = memalloc::allocate_unique_ptr<test_lol<double>[]>(alloc3, size);
+         //auto sptr = std::unique_ptr<double[]>(new double[size]);
+         //test_lol<double, memalloc::mempool_allocator<double> > test(size);
+         //test_lol<double> test(size);
+         //deleted_unique_ptr<double, decltype(alloc)> ptr(size);
+         //ptr = alloc.allocate(size);
+         //alloc.deallocate(ptr, size);
+         //ptr = new double[size];
+         //delete[] ptr;
+         t.stop();
+      }
+      std::cout << " Average time : " << t.average_time<std::milli>() << " ms" << std::endl;
    }
 
-   std::cout << " Average time : " << t.average_time<std::milli>() << " ms" << std::endl;
 
    return 0;
 }

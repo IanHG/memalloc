@@ -1,5 +1,5 @@
-CXX=icpc
-CXXSTD=--std=c++11
+CXX=g++
+CXXSTD=--std=c++14
 CXXFLAGS=-Wall
 CXXOPTIMFLAGS=-O3
 CXXDEBUGFLAGS=-g -O0
