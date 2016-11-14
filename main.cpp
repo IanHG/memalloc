@@ -7,6 +7,7 @@
 #include "timer.h"
 #include "allocator.h"
 #include "allocatable.h"
+#include "mempool_allocator.h"
 #include "mempool_alloc_policy.h"
 #include "allocate_unique_ptr.h"
 
@@ -43,26 +44,28 @@ class test_lol
    using allocator_tp = memalloc::allocatable<T, Alloc>;
    using allocator_tpp = memalloc::allocatable<T*, Alloc>;
 
+   std::size_t n;
    std::vector<int, Alloc> lol;
    double* p;
    double** pp;
    typename allocator_tp::unique_array sptr;
+   typename allocator_tp::unique_pointer sptr2;
 
    public:
-      test_lol()
-         : lol(2)
-         , p(allocator_tp::allocate(10))
-         , pp(allocator_tpp::allocate(10))
-         , sptr(allocator_tp::allocate_unique_array(10))
+      test_lol(std::size_t n_)
+         : n(n_)
+         , lol(n)
+         , p(allocator_tp::allocate(n))
+         , pp(allocator_tpp::allocate(n))
+         , sptr(allocator_tp::allocate_unique_array(n))
+         , sptr2(allocator_tp::allocate_unique_pointer())
       {
-         sptr[0] = 9.99;
       }
       
       ~test_lol()
       {
-         allocator_tp::deallocate(p, 10);
-         allocator_tpp::deallocate(pp, 10);
-         std::cout << sptr[0] << std::endl;
+         allocator_tp::deallocate(p, n);
+         allocator_tpp::deallocate(pp, n);
       }
 
       double& operator[](int i)
@@ -77,36 +80,38 @@ int main()
    memalloc::allocator<double> alloc;
    //memalloc::allocator<double, memalloc::mempool_alloc_policy<double> > alloc2;
    memalloc::allocator<double, memalloc::mempool_alloc_policy<double> > alloc2;
-   int n = 100;
+   int n = 100000;
    double* ptr;
-   int size = 10;
+   int size = 10000;
    
-   test_lol<double, memalloc::mempool_alloc_policy<double> > test;
-   //test_lol<double, memalloc::mempool_alloc_policy<double> > test2 = test;
+   //test_lol<double, memalloc::mempool_alloc_policy<double> > test;
+   ////test_lol<double, memalloc::mempool_alloc_policy<double> > test2 = test;
 
-   test[0] = 3.15;
+   //test[0] = 3.15;
 
-   std::cout << test[0] << std::endl;
+   //std::cout << test[0] << std::endl;
 
-   auto sptr  = memalloc::allocate_unique_ptr<double[]>(alloc, 10);
-   auto sptr2 = memalloc::allocate_unique_ptr<double[]>(alloc2, 10);
-   auto sptr3 = memalloc::allocate_unique_ptr<double[]>(alloc, 12);
+   //auto sptr  = memalloc::allocate_unique_ptr<double[]>(alloc, 10);
+   //auto sptr2 = memalloc::allocate_unique_ptr<double[]>(alloc2, 10);
+   //auto sptr3 = memalloc::allocate_unique_ptr<double[]>(alloc, 12);
 
-   std::swap(sptr, sptr3);
+   //std::swap(sptr, sptr3);
 
-   sptr[0] = 3.3333;
-   std::cout << sptr[0] << std::endl;
+   //sptr[0] = 3.3333;
+   //std::cout << sptr[0] << std::endl;
 
-   //for(int i = 0; i < n; ++i)
-   //{
-   //   t.start();
-   //   deleted_unique_ptr<double, decltype(alloc)> ptr(size);
-   //   //ptr = alloc.allocate(size);
-   //   //alloc.deallocate(ptr, size);
-   //   //ptr = new double[size];
-   //   //delete[] ptr;
-   //   t.stop();
-   //}
+   for(int i = 0; i < n; ++i)
+   {
+      t.start();
+      test_lol<double, memalloc::mempool_allocator<double> > test(size);
+      //test_lol<double> test(size);
+      //deleted_unique_ptr<double, decltype(alloc)> ptr(size);
+      //ptr = alloc.allocate(size);
+      //alloc.deallocate(ptr, size);
+      //ptr = new double[size];
+      //delete[] ptr;
+      t.stop();
+   }
 
    std::cout << " Average time : " << t.average_time<std::milli>() << " ms" << std::endl;
 
