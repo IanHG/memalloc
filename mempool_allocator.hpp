@@ -1,8 +1,8 @@
 #ifndef MEMPOOL_ALLOCATOR_H_INCLUDED
 #define MEMPOOL_ALLOCATOR_H_INCLUDED
 
-#include "allocator.h"
-#include "mempool_alloc_policy.h"
+#include "allocator.hpp"
+#include "mempool_alloc_policy.hpp"
 
 namespace memalloc
 {

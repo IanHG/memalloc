@@ -1,8 +1,8 @@
 #ifndef ALLOCATOR_H_INCLUDED
 #define ALLOCATOR_H_INCLUDED
 
-#include "object_traits.h"
-#include "standard_alloc_policy.h"
+#include "object_traits.hpp"
+#include "standard_alloc_policy.hpp"
 
 namespace memalloc
 {

@@ -4,12 +4,12 @@
 #include <type_traits>
 #include <cassert>
 
-#include "timer.h"
-#include "allocator.h"
-#include "allocatable.h"
-#include "mempool_allocator.h"
-#include "mempool_alloc_policy.h"
-#include "allocate_unique_ptr.h"
+#include "timer.hpp"
+#include "allocator.hpp"
+#include "allocatable.hpp"
+#include "mempool_allocator.hpp"
+#include "mempool_alloc_policy.hpp"
+#include "allocate_unique_ptr.hpp"
 
 
 //template

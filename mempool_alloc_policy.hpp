@@ -1,7 +1,7 @@
 #ifndef MEMPOOLALLOCATOR_H_INCLUDED
 #define MEMPOOLALLOCATOR_H_INCLUDED
 
-#include"mempool.h"
+#include"mempool.hpp"
 
 namespace memalloc
 {

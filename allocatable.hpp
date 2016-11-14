@@ -1,8 +1,8 @@
 #ifndef ALLOCATALBE_H_INCLUDED
 #define ALLOCATALBE_H_INCLUDED
 
-#include "allocator.h"
-#include "allocate_unique_ptr.h"
+#include "allocator.hpp"
+#include "allocate_unique_ptr.hpp"
 
 namespace memalloc
 {
