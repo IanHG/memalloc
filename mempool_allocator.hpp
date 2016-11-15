@@ -7,8 +7,8 @@
 namespace memalloc
 {
 
-   template<class T>
-      using mempool_allocator = allocator<T, mempool_alloc_policy<T> >;
+template<class T>
+using mempool_allocator = allocator<T, mempool_alloc_policy<T> >;
 
 } /* namespace memalloc */
 

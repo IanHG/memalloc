@@ -19,6 +19,7 @@ class allocatable_impl
       using pointer = typename allocator::pointer;
       using const_pointer = typename allocator::const_pointer;
       using unique_pointer = decltype(memalloc::allocate_unique_ptr<typename Alloc::value_type>(std::declval<allocator&>(), 0, nullptr));
+      using construct_unique_pointer = decltype(memalloc::allocate_and_construct_unique_ptr<typename Alloc::value_type>(std::declval<allocator&>(), 0, nullptr));
       using unique_array = decltype(memalloc::allocate_unique_ptr<typename Alloc::value_type[]>(std::declval<allocator&>(), 0, nullptr));
 
       inline allocatable_impl() = default;
@@ -51,10 +52,16 @@ class allocatable_impl
       {
          return memalloc::allocate_unique_ptr<typename Alloc::value_type>(this->allocator_type(), 1, nullptr);
       }
+      
+      template<class... Args>
+      inline auto allocate_and_construct_unique_pointer(const_pointer hint = nullptr, Args&&... args)
+      {
+         return memalloc::allocate_and_construct_unique_ptr<typename Alloc::value_type>(this->allocator_type(), 1, hint, std::forward<Args>(args)...);
+      }
 
       inline auto allocate_unique_array(std::size_t n, const_pointer hint = nullptr)
       {
-         return memalloc::allocate_unique_ptr<typename Alloc::value_type[]>(this->allocator_type(), n, nullptr);
+         return memalloc::allocate_unique_ptr<typename Alloc::value_type[]>(this->allocator_type(), n, hint);
       }
 };
 

@@ -28,10 +28,17 @@ class object_traits
       //!@}
       
       //! Construct
-      inline void construct(T* p, const T& t) { new(p) T(t); }
+      template<class... Args>
+      inline void construct(T* p, Args&&... args) 
+      { 
+         new(static_cast<void*>(p)) T(std::forward<Args>(args)...); 
+      }
       
       //! Destroy
-      inline void destroy(T* p) { p->~T(); }
+      inline void destroy(T* p) 
+      { 
+         p->~T(); 
+      }
 };
 
 } /* namespace memalloc */

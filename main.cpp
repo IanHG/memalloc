@@ -38,8 +38,8 @@ template
    ,  class Alloc = memalloc::allocator<T> 
    >
 class test_lol
-   :  public memalloc::allocatable<T, Alloc>
-   ,  public memalloc::allocatable<T*, Alloc>
+   :  private memalloc::allocatable<T, Alloc>
+   ,  private memalloc::allocatable<T*, Alloc>
 {
    using allocator_tp = memalloc::allocatable<T, Alloc>;
    using allocator_tpp = memalloc::allocatable<T*, Alloc>;
@@ -49,7 +49,7 @@ class test_lol
    double* p;
    double** pp;
    typename allocator_tp::unique_array sptr;
-   typename allocator_tp::unique_pointer sptr2;
+   typename allocator_tp::construct_unique_pointer sptr2;
 
    public:
       test_lol(std::size_t n_)
@@ -58,12 +58,14 @@ class test_lol
          , p(allocator_tp::allocate(n))
          , pp(allocator_tpp::allocate(n))
          , sptr(allocator_tp::allocate_unique_array(n))
-         , sptr2(allocator_tp::allocate_unique_pointer())
+         , sptr2(allocator_tp::allocate_and_construct_unique_pointer(nullptr))
       {
+         //std::cout << " constructong " << std::endl;
       }
       
       ~test_lol()
       {
+         //std::cout << " destroying " << std::endl;
          allocator_tp::deallocate(p, n);
          allocator_tpp::deallocate(pp, n);
       }
@@ -74,16 +76,56 @@ class test_lol
       }
 };
 
+template
+   <  class T = double
+   ,  class Alloc = memalloc::allocator<T> 
+   >
+class test_none
+   :  private memalloc::allocatable<T, Alloc>
+{
+};
+
+template
+   <  class T = double
+   ,  class Alloc = memalloc::allocator<T> 
+   >
+class test_tp
+   :  private memalloc::allocatable<T, Alloc>
+{
+};
+
+template
+   <  class T = double
+   ,  class Alloc = memalloc::allocator<T> 
+   >
+class test_tp_tpp
+   :  private memalloc::allocatable<T, Alloc>
+   ,  private memalloc::allocatable<T*, Alloc>
+{
+};
+
 int main()
 {
+   using test_type = test_lol<double>;
+   //using test_type = test_lol<double, memalloc::mempool_allocator<double> >;
+   
    memalloc::allocator<double> alloc;
+   //decltype(alloc)::template rebind<test_type >::other alloc3;
    //memalloc::allocator<double, memalloc::mempool_alloc_policy<double> > alloc2;
    memalloc::allocator<double, memalloc::mempool_alloc_policy<double> > alloc2;
-   decltype(alloc2)::template rebind<test_lol<double> >::other alloc3;
-   int n = 100;
-   int nrepeat = 1;
+   decltype(alloc2)::template rebind<test_type >::other alloc3;
+   //int n = 1;
+   //int nrepeat = 1;
+   int n = 10000000;
+   int nrepeat = 10;
    double* ptr;
    int size = 10000;
+
+   //std::cout << sizeof(test_none<>) << std::endl;
+   //std::cout << sizeof(test_tp<>) << std::endl;
+   //std::cout << sizeof(test_tp_tpp<>) << std::endl;
+   //std::cout << sizeof(test_tp<double, memalloc::mempool_allocator<double> >) << std::endl;
+   //std::cout << sizeof(test_tp_tpp<double, memalloc::mempool_allocator<double> >) << std::endl;
    
    //test_lol<double, memalloc::mempool_alloc_policy<double> > test;
    ////test_lol<double, memalloc::mempool_alloc_policy<double> > test2 = test;
@@ -107,8 +149,12 @@ int main()
       for(int i = 0; i < n; ++i)
       {
          t.start();
-         //auto sptr = memalloc::allocate_unique_ptr<double[]>(alloc, size);
-         auto sptr = memalloc::allocate_unique_ptr<test_lol<double>[]>(alloc3, size);
+         auto sptr = memalloc::allocate_and_construct_unique_ptr<test_type>(alloc3, 1, nullptr, 10);
+         
+         //auto sptr = memalloc::allocate_unique_ptr<test_type>(alloc3, 1, nullptr, 10);
+         //alloc3.construct(sptr.get(), 10);
+         //alloc3.destroy(sptr.get());
+         
          //auto sptr = std::unique_ptr<double[]>(new double[size]);
          //test_lol<double, memalloc::mempool_allocator<double> > test(size);
          //test_lol<double> test(size);

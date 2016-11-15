@@ -6,21 +6,6 @@
 namespace memalloc
 {
 
-///* forward declaration */
-//template<typename T>
-//class mempool_alloc_policy;
-//
-///* specialization for void */
-//template<>
-//class mempool_alloc_policy<void>
-//{
-//   public:
-//      typedef void*       pointer;
-//      typedef const void* const_pointer;
-//      typedef void        value_type;
-//      template<typename U> struct rebind{ typedef mempool_alloc_policy<U> other; };
-//};
-
 template<typename T>
 class mempool_alloc_policy
 {
