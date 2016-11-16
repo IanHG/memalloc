@@ -10,6 +10,7 @@
 #include "mempool_allocator.hpp"
 #include "mempool_alloc_policy.hpp"
 #include "allocate_smart.hpp"
+#include "allocator_traits.hpp"
 
 
 //template
@@ -106,14 +107,14 @@ class test_tp_tpp
 
 int main()
 {
-   //using test_type = test_lol<double>;
-   using test_type = test_lol<double, memalloc::mempool_allocator<double> >;
+   using test_type = test_lol<double>;
+   //using test_type = test_lol<double, memalloc::mempool_allocator<double> >;
    
    memalloc::allocator<double> alloc;
-   //decltype(alloc)::template rebind<test_type >::other alloc3;
+   decltype(alloc)::template rebind<test_type >::other alloc3;
    //memalloc::allocator<double, memalloc::mempool_alloc_policy<double> > alloc2;
    memalloc::allocator<double, memalloc::mempool_alloc_policy<double> > alloc2;
-   decltype(alloc2)::template rebind<test_type >::other alloc3;
+   //decltype(alloc2)::template rebind<test_type >::other alloc3;
    //int n = 1;
    //int nrepeat = 1;
    int n = 10000000;
