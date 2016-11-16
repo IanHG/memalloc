@@ -49,7 +49,7 @@ class test_lol
    double* p;
    double** pp;
    typename allocator_tp::unique_array sptr;
-   typename allocator_tp::construct_unique_pointer sptr2;
+   typename allocator_tp::constructed_unique_pointer sptr2;
 
    public:
       test_lol(std::size_t n_)
@@ -106,8 +106,8 @@ class test_tp_tpp
 
 int main()
 {
-   using test_type = test_lol<double>;
-   //using test_type = test_lol<double, memalloc::mempool_allocator<double> >;
+   //using test_type = test_lol<double>;
+   using test_type = test_lol<double, memalloc::mempool_allocator<double> >;
    
    memalloc::allocator<double> alloc;
    //decltype(alloc)::template rebind<test_type >::other alloc3;
@@ -149,7 +149,7 @@ int main()
       for(int i = 0; i < n; ++i)
       {
          t.start();
-         auto sptr = memalloc::allocate_and_construct_unique_ptr<test_type>(alloc3, 1, nullptr, 10);
+         auto sptr = memalloc::allocate_and_construct_unique_pointer<test_type>(alloc3, nullptr, 10);
          
          //auto sptr = memalloc::allocate_unique_ptr<test_type>(alloc3, 1, nullptr, 10);
          //alloc3.construct(sptr.get(), 10);

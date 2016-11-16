@@ -15,12 +15,15 @@ class allocatable_impl
    :  public Alloc
 {
    public:
-      using allocator = Alloc;
-      using pointer = typename allocator::pointer;
-      using const_pointer = typename allocator::const_pointer;
-      using unique_pointer = decltype(memalloc::allocate_unique_ptr<typename Alloc::value_type>(std::declval<allocator&>(), 0, nullptr));
-      using construct_unique_pointer = decltype(memalloc::allocate_and_construct_unique_ptr<typename Alloc::value_type>(std::declval<allocator&>(), 0, nullptr));
-      using unique_array = decltype(memalloc::allocate_unique_ptr<typename Alloc::value_type[]>(std::declval<allocator&>(), 0, nullptr));
+      using allocator_type = Alloc;
+      using pointer = typename allocator_type::pointer;
+      using const_pointer = typename allocator_type::const_pointer;
+      
+      using unique_pointer = decltype(memalloc::allocate_unique_pointer<typename Alloc::value_type>(std::declval<allocator_type&>(), nullptr));
+      using unique_array = decltype(memalloc::allocate_unique_array<typename Alloc::value_type>(std::declval<allocator_type&>(), 0, nullptr));
+      
+      using constructed_unique_pointer = decltype(memalloc::allocate_and_construct_unique_pointer<typename Alloc::value_type>(std::declval<allocator_type&>(), nullptr));
+      using constructed_unique_array = decltype(memalloc::allocate_and_construct_unique_array<typename Alloc::value_type>(std::declval<allocator_type&>(), 0, nullptr));
 
       inline allocatable_impl() = default;
 
@@ -28,40 +31,46 @@ class allocatable_impl
 
       inline ~allocatable_impl() = default;
       
-      inline allocator& allocator_type()
+      inline allocator_type& get_allocator_type()
       {
-         return static_cast<allocator&>(*this);
+         return static_cast<allocator_type&>(*this);
       }
       
-      inline const allocator& allocator_type() const
+      inline const allocator_type& get_allocator_type() const
       {
-         return static_cast<const allocator&>(*this);
+         return static_cast<const allocator_type&>(*this);
       }
 
       inline pointer allocate(std::size_t n, const_pointer hint = nullptr)
       {
-         return allocator_type().allocate(n, hint);
+         return get_allocator_type().allocate(n, hint);
       }
 
       inline void deallocate(pointer ptr, std::size_t n)
       {
-         allocator_type().deallocate(ptr, n);
+         get_allocator_type().deallocate(ptr, n);
       }
 
       inline auto allocate_unique_pointer(const_pointer hint = nullptr)
       {
-         return memalloc::allocate_unique_ptr<typename Alloc::value_type>(this->allocator_type(), 1, nullptr);
+         return memalloc::allocate_unique_pointer<typename Alloc::value_type>(this->get_allocator_type(), hint);
       }
       
+      inline auto allocate_unique_array(std::size_t n, const_pointer hint = nullptr)
+      {
+         return memalloc::allocate_unique_array<typename Alloc::value_type>(this->get_allocator_type(), n, hint);
+      }
+
       template<class... Args>
       inline auto allocate_and_construct_unique_pointer(const_pointer hint = nullptr, Args&&... args)
       {
-         return memalloc::allocate_and_construct_unique_ptr<typename Alloc::value_type>(this->allocator_type(), 1, hint, std::forward<Args>(args)...);
+         return memalloc::allocate_and_construct_unique_pointer<typename Alloc::value_type>(this->get_allocator_type(), hint, std::forward<Args>(args)...);
       }
-
-      inline auto allocate_unique_array(std::size_t n, const_pointer hint = nullptr)
+      
+      template<class... Args>
+      inline auto allocate_and_construct_unique_array(std::size_t n, const_pointer hint = nullptr, Args&&... args)
       {
-         return memalloc::allocate_unique_ptr<typename Alloc::value_type[]>(this->allocator_type(), n, hint);
+         return memalloc::allocate_and_construct_unique_array<typename Alloc::value_type>(this->get_allocator_type(), n, hint, std::forward<Args>(args)...);
       }
 };
 
@@ -73,10 +82,22 @@ class allocatable
    :  public allocatable_impl<typename Alloc::template rebind<T>::other>
 {
    public:
+      using impl_type = allocatable_impl<typename Alloc::template rebind<T>::other>;
+      using allocator_type = typename impl_type::allocator_type;
+
       inline explicit allocatable() = default;
       inline explicit allocatable(const allocatable&) = default;
       inline ~allocatable() = default;
+      
+      inline explicit allocatable(allocator_type& alloc)
+         :  impl_type(alloc)
+      {
+      }
 
+      inline explicit allocatable(allocator_type&& alloc)
+         :  impl_type(std::move(alloc))
+      {
+      }
 };
 
 } /* namespace memalloc */
