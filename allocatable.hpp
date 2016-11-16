@@ -2,7 +2,7 @@
 #define ALLOCATALBE_H_INCLUDED
 
 #include "allocator.hpp"
-#include "allocate_unique_ptr.hpp"
+#include "allocate_smart.hpp"
 
 namespace memalloc
 {

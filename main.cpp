@@ -9,7 +9,7 @@
 #include "allocatable.hpp"
 #include "mempool_allocator.hpp"
 #include "mempool_alloc_policy.hpp"
-#include "allocate_unique_ptr.hpp"
+#include "allocate_smart.hpp"
 
 
 //template
