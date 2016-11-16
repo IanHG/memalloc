@@ -41,13 +41,13 @@ class allocator
 
       inline ~allocator() {}
       
-      inline allocator(allocator const& rhs): Traits(rhs), Policy(rhs) {}
+      inline allocator(allocator const& rhs): Policy(rhs), Traits(rhs) {}
       
       template <class U>
       inline allocator(allocator<U> const&) {}
       
       template <class U, class P, class T2>
-      inline allocator(allocator<U, P, T2> const& rhs) : Traits(rhs), Policy(rhs) {}
+      inline allocator(allocator<U, P, T2> const& rhs) : Policy(rhs), Traits(rhs) {}
 };
 
 template<class T, class P, class Tr>
