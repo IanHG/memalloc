@@ -44,7 +44,7 @@ class mempool_alloc_policy
       }
       
       /* max size */
-      size_type max_size() const throw() { size_t(-1) / sizeof(value_type); }
+      size_type max_size() const throw() { return size_t(-1) / sizeof(value_type); }
          
       /* operator overload */
       template<typename U>
