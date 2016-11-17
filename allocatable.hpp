@@ -18,6 +18,7 @@ class allocatable_impl
       using allocator_type = Alloc;
       using pointer = typename allocator_type::pointer;
       using const_pointer = typename allocator_type::const_pointer;
+      using const_void_pointer = typename allocator_type::const_pointer;
       
       using unique_pointer = decltype(memalloc::allocate_unique_pointer<typename Alloc::value_type>(std::declval<allocator_type&>(), nullptr));
       using unique_array = decltype(memalloc::allocate_unique_array<typename Alloc::value_type>(std::declval<allocator_type&>(), 0, nullptr));

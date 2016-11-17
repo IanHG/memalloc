@@ -34,10 +34,23 @@ class mempool
       enum pool_defaults{ init_size = 1024*1024*1024 };
       std::list<char*> _pool;
       mempool_block*   _blocks;
+      mempool_block*   _last_allocated_block;
+      mempool_block*   _last_deallocated_block;
       size_t           _size;
       
       //!
       void grow(mempool_block* block, size_t size);
+      
+      //!
+      mempool_block* check_block(mempool_block*, std::size_t);
+      
+      //!
+      mempool_block* find_block_no_grow(mempool_block*, std::size_t);
+      
+      //!
+      mempool_block* find_block(mempool_block*, std::size_t);
+
+      //!
       struct killer
       { 
          void operator() (char* ptr) { delete[] ptr; }

@@ -1,9 +1,9 @@
 CXX=g++
 CXXSTD=--std=c++14
-CXXOPTIMFLAGS=-O3
-CXXDEBUGFLAGS=-g -O0
-CXXFLAGS=-Wall $(CXXOPTIMFLAGS)
-LIBS=
+CXXOPTIMFLAGS=-O3 -g
+CXXDEBUGFLAGS=-g -O0 -rdynamic
+CXXFLAGS=-Wall $(CXXDEBUGFLAGS)
+LIBS=../../libmda/lib/libmda.a
 
 # find source files
 SOURCEDIR := $(shell pwd)

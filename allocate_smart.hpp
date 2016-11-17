@@ -21,7 +21,7 @@ struct decay_type<T[]>
    using type = T;
 };
 
-//! delete single pointer
+//! delete pointer
 template
    <  class T
    ,  class Alloc
@@ -76,7 +76,7 @@ struct deleter_array
    }
 };
 
-//! delete and construct pointer
+//! destroy and delete pointer
 template
    <  class T
    ,  class Alloc
@@ -103,7 +103,7 @@ struct deleter_destroy_pointer
    }
 };
 
-//! delete and construct array
+//! destroy and delete array
 template
    <  class T
    ,  class Alloc

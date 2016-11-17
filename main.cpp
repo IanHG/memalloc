@@ -4,6 +4,8 @@
 #include <type_traits>
 #include <cassert>
 
+#include "../../libmda/util/stacktrace.h"
+
 #include "timer.hpp"
 #include "allocator.hpp"
 #include "allocatable.hpp"
@@ -47,8 +49,8 @@ class test_lol
 
    std::size_t n;
    std::vector<int, Alloc> lol;
-   double* p;
-   double** pp;
+   T* p;
+   T** pp;
    typename allocator_tp::unique_array sptr;
    typename allocator_tp::constructed_unique_pointer sptr2;
 
@@ -81,6 +83,17 @@ template
    <  class T = double
    ,  class Alloc = memalloc::allocator<T> 
    >
+class test_lol_lol
+   :  public test_lol<T, Alloc>
+{
+   using base = test_lol<T, Alloc>;
+   T* ptr = base::allocator_tp::allocate(1, nullptr);
+};
+
+template
+   <  class T = double
+   ,  class Alloc = memalloc::allocator<T> 
+   >
 class test_none
    :  private memalloc::allocatable<T, Alloc>
 {
@@ -107,18 +120,18 @@ class test_tp_tpp
 
 int main()
 {
-   using test_type = test_lol<double>;
-   //using test_type = test_lol<double, memalloc::mempool_allocator<double> >;
+   //using test_type = test_lol<double>;
+   using test_type = test_lol<double, memalloc::mempool_allocator<double> >;
    
    memalloc::allocator<double> alloc;
-   decltype(alloc)::template rebind<test_type >::other alloc3;
+   //decltype(alloc)::template rebind<test_type >::other alloc3;
    //memalloc::allocator<double, memalloc::mempool_alloc_policy<double> > alloc2;
    memalloc::allocator<double, memalloc::mempool_alloc_policy<double> > alloc2;
-   //decltype(alloc2)::template rebind<test_type >::other alloc3;
-   //int n = 1;
-   //int nrepeat = 1;
-   int n = 10000000;
-   int nrepeat = 10;
+   decltype(alloc2)::template rebind<test_type >::other alloc3;
+   //int n = 10;
+   //int nrepeat = 2;
+   int n = 10;
+   int nrepeat = 5;
    double* ptr;
    int size = 10000;
 
@@ -147,10 +160,12 @@ int main()
    for(int irepeat = 0; irepeat < nrepeat; ++irepeat)
    {
       timer t;
+      std::vector<decltype(memalloc::allocate_and_construct_unique_pointer<test_type>(alloc3, nullptr, 0))> sptr_vec;
       for(int i = 0; i < n; ++i)
       {
          t.start();
-         auto sptr = memalloc::allocate_and_construct_unique_pointer<test_type>(alloc3, nullptr, 10);
+         //auto sptr = memalloc::allocate_and_construct_unique_pointer<test_type>(alloc3, nullptr, 10);
+         sptr_vec.emplace_back(memalloc::allocate_and_construct_unique_pointer<test_type>(alloc3, nullptr, 10));
          
          //auto sptr = memalloc::allocate_unique_ptr<test_type>(alloc3, 1, nullptr, 10);
          //alloc3.construct(sptr.get(), 10);
