@@ -5,66 +5,82 @@
 #include<stdlib.h>
 #include<list>
 #include<algorithm>
+#include<memory>
 
 namespace memalloc
 {
 
 struct mempool_block
 {
-   mempool_block* _prev;
-   mempool_block* _next;
-   size_t        _size;
-   bool          _free;
-   void*         _root;
+   mempool_block* m_prev;
+   mempool_block* m_next;
+   std::size_t    m_size;
+   bool           m_free;
+   void*          m_root;
 
-   mempool_block(mempool_block* prev, mempool_block* next, size_t size, int free)
-      :  _prev(prev)
-      ,  _next(next)
-      ,  _size(size)
-      ,  _free(free) 
+   mempool_block(mempool_block* prev, mempool_block* next, std::size_t size, int free)
+      :  m_prev(prev)
+      ,  m_next(next)
+      ,  m_size(size)
+      ,  m_free(free) 
    { 
    }
    
    ~mempool_block() = default;
 };
 
+class mempool_chunk
+{
+   private:
+      std::unique_ptr<char[]> m_chunk;
+      mempool_block*  m_start_block;
+      mempool_block*  m_last_allocated_block;
+      mempool_block*  m_last_deallocated_block;
+
+      mempool_block* check_block(mempool_block*, std::size_t size);
+
+      mempool_block* find_block(mempool_block*, std::size_t size);
+   
+   public:
+      mempool_chunk(std::size_t size);
+
+      bool same_root(void* resource);
+
+      void* acquire(std::size_t size, void* hint);
+
+      void release(void* resource, std::size_t size);
+};
+
+struct mempool_stat
+{
+   unsigned long allocated;
+};
+
 class mempool
 {
    private:
-      enum pool_defaults{ init_size = 1024*1024*1024 };
-      std::list<char*> _pool;
-      mempool_block*   _blocks;
-      mempool_block*   _last_allocated_block;
-      mempool_block*   _last_deallocated_block;
-      size_t           _size;
+      enum mempool_default { init_size = 1024*1024*1024 };
+      mempool_stat m_stat;
+      std::list<mempool_chunk> m_pool;
+      mempool_chunk*  m_last_allocate_chunk;
+      mempool_chunk*  m_last_deallocate_chunk;
+      size_t          m_size;
       
-      //!
-      void grow(mempool_block* block, size_t size);
-      
-      //!
-      mempool_block* check_block(mempool_block*, std::size_t);
-      
-      //!
-      mempool_block* find_block_no_grow(mempool_block*, std::size_t);
-      
-      //!
-      mempool_block* find_block(mempool_block*, std::size_t);
-
-      //!
-      struct killer
-      { 
-         void operator() (char* ptr) { delete[] ptr; }
-      };
+      //! Grow a new chunk and return a reference to the newly allocated chunk
+      mempool_chunk& grow(std::size_t size);
+   
    public:
       //!
-      mempool(size_t size=init_size);
+      mempool(std::size_t size = mempool_default::init_size);
+      
       //!
       ~mempool();
       
       //! Acquire a chunk of memory
-      void* acquire(size_t size);
+      void* acquire(std::size_t size, void* hint = nullptr);
+
       //! Release a chunk of memory
-      void release(void* resource, size_t size = 0);
+      void release(void* resource, std::size_t size);
 };
 
 } /* namespace memalloc */

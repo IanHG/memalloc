@@ -40,7 +40,7 @@ class mempool_alloc_policy
       //! deallocate
       void deallocate(pointer p, size_type n) 
       { 
-         _mem.release(p,n); 
+         _mem.release(p, n*sizeof(value_type)); 
       }
       
       /* max size */

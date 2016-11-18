@@ -3,6 +3,7 @@
 #include <functional>
 #include <type_traits>
 #include <cassert>
+#include <random>
 
 #include "../../libmda/util/stacktrace.h"
 
@@ -120,18 +121,23 @@ class test_tp_tpp
 
 int main()
 {
+   int vec_size = 10;
+   std::random_device rd;
+   std::mt19937 gen(rd());
+   std::uniform_int_distribution<> dis(0, vec_size - 1);
+
    //using test_type = test_lol<double>;
    using test_type = test_lol<double, memalloc::mempool_allocator<double> >;
    
    memalloc::allocator<double> alloc;
    //decltype(alloc)::template rebind<test_type >::other alloc3;
    //memalloc::allocator<double, memalloc::mempool_alloc_policy<double> > alloc2;
-   memalloc::allocator<double, memalloc::mempool_alloc_policy<double> > alloc2;
+   memalloc::allocator<double> alloc2;
    decltype(alloc2)::template rebind<test_type >::other alloc3;
    //int n = 10;
    //int nrepeat = 2;
-   int n = 10;
-   int nrepeat = 5;
+   int n = 10000000;
+   int nrepeat = 10;
    double* ptr;
    int size = 10000;
 
@@ -160,27 +166,51 @@ int main()
    for(int irepeat = 0; irepeat < nrepeat; ++irepeat)
    {
       timer t;
-      std::vector<decltype(memalloc::allocate_and_construct_unique_pointer<test_type>(alloc3, nullptr, 0))> sptr_vec;
+      t.start();
+      std::vector<double*> lol(vec_size, nullptr);
       for(int i = 0; i < n; ++i)
       {
-         t.start();
-         //auto sptr = memalloc::allocate_and_construct_unique_pointer<test_type>(alloc3, nullptr, 10);
-         sptr_vec.emplace_back(memalloc::allocate_and_construct_unique_pointer<test_type>(alloc3, nullptr, 10));
-         
-         //auto sptr = memalloc::allocate_unique_ptr<test_type>(alloc3, 1, nullptr, 10);
-         //alloc3.construct(sptr.get(), 10);
-         //alloc3.destroy(sptr.get());
-         
-         //auto sptr = std::unique_ptr<double[]>(new double[size]);
-         //test_lol<double, memalloc::mempool_allocator<double> > test(size);
-         //test_lol<double> test(size);
-         //deleted_unique_ptr<double, decltype(alloc)> ptr(size);
-         //ptr = alloc.allocate(size);
-         //alloc.deallocate(ptr, size);
-         //ptr = new double[size];
-         //delete[] ptr;
-         t.stop();
+         auto random = dis(gen);
+         if(!lol[random])
+         {
+            lol[random] = alloc2.allocate(size);
+         }
+         else
+         {
+            alloc2.deallocate(lol[random], size);
+            lol[random] = nullptr;
+         }
       }
+
+      for(int i = 0; i < lol.size(); ++i)
+      {
+         if(lol[i])
+         {
+            alloc2.deallocate(lol[i], size);
+         }
+      }
+      t.stop();
+      //std::vector<decltype(memalloc::allocate_and_construct_unique_pointer<test_type>(alloc3, nullptr, 0))> sptr_vec;
+      //for(int i = 0; i < n; ++i)
+      //{
+      //   t.start();
+      //   //auto sptr = memalloc::allocate_and_construct_unique_pointer<test_type>(alloc3, nullptr, 10);
+      //   sptr_vec.emplace_back(memalloc::allocate_and_construct_unique_pointer<test_type>(alloc3, nullptr, 10));
+      //   
+      //   //auto sptr = memalloc::allocate_unique_ptr<test_type>(alloc3, 1, nullptr, 10);
+      //   //alloc3.construct(sptr.get(), 10);
+      //   //alloc3.destroy(sptr.get());
+      //   
+      //   //auto sptr = std::unique_ptr<double[]>(new double[size]);
+      //   //test_lol<double, memalloc::mempool_allocator<double> > test(size);
+      //   //test_lol<double> test(size);
+      //   //deleted_unique_ptr<double, decltype(alloc)> ptr(size);
+      //   //ptr = alloc.allocate(size);
+      //   //alloc.deallocate(ptr, size);
+      //   //ptr = new double[size];
+      //   //delete[] ptr;
+      //   t.stop();
+      //}
       std::cout << " Average time : " << t.average_time<std::milli>() << " ms" << std::endl;
    }
 
