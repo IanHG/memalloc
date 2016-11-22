@@ -8,6 +8,7 @@ namespace memalloc
 
 template<typename T>
 class mempool_alloc_policy
+   :  private mempool_holder
 {
    public:
       using value_type = T;
@@ -35,12 +36,12 @@ class mempool_alloc_policy
       //! allocate
       pointer allocate(size_type size, const_pointer hint = 0) 
       { 
-         return static_cast<pointer>( _mem.acquire(size*sizeof(value_type)) ); 
+         return static_cast<pointer>( m_mem.acquire(size*sizeof(value_type)) ); 
       }
       //! deallocate
       void deallocate(pointer p, size_type n) 
       { 
-         _mem.release(p, n*sizeof(value_type)); 
+         m_mem.release(p, n*sizeof(value_type)); 
       }
       
       /* max size */
@@ -49,13 +50,7 @@ class mempool_alloc_policy
       /* operator overload */
       template<typename U>
       bool operator==(const mempool_alloc_policy<U>&) throw() { return true; }
-
-   private:
-      //! Internal memory pool
-      static mempool _mem;
 };
-
-template<typename T> mempool mempool_alloc_policy<T>::_mem;
 
 } /* namespace memalloc */
 

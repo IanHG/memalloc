@@ -25,11 +25,18 @@ mempool_block* mempool_chunk::find_block(mempool_block* block, std::size_t size)
    while(b && (!b->m_free || (b->m_size < size))) 
    {
       b = b->m_next;
-      //if(!b) b = m_start_block;
-      //if(b == block) break;
    }
 
    return b;
+}
+
+/**
+ *
+ **/
+std::size_t mempool_chunk::padding(std::size_t size) const
+{
+   size += (size + sizeof(mempool_block))%m_pad_to;
+   return size;
 }
 
 /**
@@ -66,10 +73,13 @@ bool mempool_chunk::same_root(void* resource)
 void* mempool_chunk::acquire(std::size_t size, void* hint)
 {
    if(!size) return nullptr;
+
+   // add padding
+   size = padding(size);
    
    // try to find a free block
    mempool_block* block = check_block(m_last_deallocated_block, size); 
-   if(!block) block = find_block(m_last_allocated_block, size);
+   if(!block) block = find_block(m_last_allocated_block->m_next, size);
    if(!block) return nullptr;
    
    // acquire the block
@@ -81,6 +91,7 @@ void* mempool_chunk::acquire(std::size_t size, void* hint)
    else
    {
       // else make new block and insert
+      //mempool_block* new_block = reinterpret_cast<mempool_block*>(reinterpret_cast<char*>(block) + size + sizeof(mempool_block));
       mempool_block* new_block = reinterpret_cast<mempool_block*>(reinterpret_cast<char*>(block) + size + sizeof(mempool_block));
       if(block->m_next) block->m_next->m_prev = new_block;
       new_block->m_next = block->m_next;
@@ -95,9 +106,6 @@ void* mempool_chunk::acquire(std::size_t size, void* hint)
    
    m_last_allocated_block = block;
 
-   //std::cout << " ALLOCATED BLOCK : " << block << std::endl;
-   //std::cout << " ALLOCATED PTR   : " << (void*)(reinterpret_cast<char*>(block) + sizeof(mempool_block)) << std::endl;
-
    return reinterpret_cast<char* >(block) + sizeof(mempool_block);
 }
 /**
@@ -108,9 +116,6 @@ void mempool_chunk::release(void* resource, std::size_t size)
    if(!resource) return;
    
    mempool_block* block = reinterpret_cast<mempool_block*>(reinterpret_cast<char*>(resource) - sizeof(mempool_block));
-   //std::cout << " RELEASE BLOCK : " << block << std::endl;
-   //std::cout << " RELEASE PTR   : " << (void*)(reinterpret_cast<char*>(block) + sizeof(mempool_block)) << std::endl;
-   //std::cout << " RELEASE RESOU : " << resource << std::endl;
 
    // check if both adjacent (next and prev) blocks are free
    if (  block->m_prev 
@@ -162,7 +167,10 @@ void mempool_chunk::release(void* resource, std::size_t size)
 
          // take next block out of list 
          block->m_next = block->m_next->m_next;
-         if(block->m_next) block->m_next->m_prev = block;
+         if(block->m_next) 
+         {
+            block->m_next->m_prev = block;
+         }
          
          block->m_free = true;
          m_last_deallocated_block = block;
@@ -182,7 +190,6 @@ void mempool_chunk::release(void* resource, std::size_t size)
  **/
 mempool_chunk& mempool::grow(std::size_t size)
 {
-   std::cout << " GROW !! " << std::endl;
    m_pool.emplace_back(std::max(size + sizeof(mempool_block), m_size));
    return m_pool.back();
 }
@@ -210,9 +217,10 @@ mempool::~mempool()
 void* mempool::acquire(std::size_t size, void* hint)
 {
    if(!size) return nullptr;
+   
    // try to acquire from last allocated chunk
    void* p;
-   if( (p = m_last_deallocate_chunk->acquire(size, hint)) )
+   if( (p = m_last_allocate_chunk->acquire(size, hint)) )
    {
       m_stat.allocated += size;
       return p;
@@ -221,6 +229,7 @@ void* mempool::acquire(std::size_t size, void* hint)
    // else try other chunks
    for(auto& chunk : m_pool)
    {
+      if( &chunk == m_last_allocate_chunk ) continue;
       if( (p = chunk.acquire(size, hint)) )
       {
          m_last_allocate_chunk = &chunk;
@@ -239,7 +248,7 @@ void* mempool::acquire(std::size_t size, void* hint)
 /**
  * release
  **/
-void mempool::release(void* resource, size_t size)
+void mempool::release(void* resource, std::size_t size)
 {
    if(!resource) return;
    
@@ -248,11 +257,17 @@ void mempool::release(void* resource, size_t size)
       if(chunk.same_root(resource))
       {
          chunk.release(resource, size);
+         m_last_deallocate_chunk = &chunk;
          return;
       }
    }
 
    std::cout << " Warning could not release " << std::endl;
 }
+
+/**
+ *
+ **/
+mempool mempool_holder::m_mem;
 
 } /* namespace memalloc */

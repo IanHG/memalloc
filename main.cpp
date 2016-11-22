@@ -119,9 +119,31 @@ class test_tp_tpp
 {
 };
 
+template<class T>
+using vector_type = std::vector<T, memalloc::mempool_allocator<T> >;
+
 int main()
 {
-   int vec_size = 10;
+   int vec_size = 100;
+   //std::cout << (void*)nullptr << std::endl;
+   //vector_type<double> vec0;
+   //{
+   //vector_type<double> vec1(vec_size);
+   //vec0.resize(vec_size);
+   //vector_type<double> vec2(vec_size);
+
+   //for(int i = 0; i < vec_size; ++i)
+   //{
+   //   vec1[i] = vec2[i] = double(i);
+   //   vec0[i] = vec1[i] + vec2[i];
+   //}
+   //}
+
+   //for(int i = 0; i < vec_size; ++i)
+   //{
+   //   std::cout << vec0[i] << std::endl;
+   //}
+
    std::random_device rd;
    std::mt19937 gen(rd());
    std::uniform_int_distribution<> dis(0, vec_size - 1);
@@ -130,14 +152,14 @@ int main()
    using test_type = test_lol<double, memalloc::mempool_allocator<double> >;
    
    memalloc::allocator<double> alloc;
-   //decltype(alloc)::template rebind<test_type >::other alloc3;
-   //memalloc::allocator<double, memalloc::mempool_alloc_policy<double> > alloc2;
-   memalloc::allocator<double> alloc2;
-   decltype(alloc2)::template rebind<test_type >::other alloc3;
+   decltype(alloc)::template rebind<test_type >::other alloc3;
+   memalloc::allocator<double, memalloc::mempool_alloc_policy<double> > alloc2;
+   //memalloc::allocator<double> alloc2;
+   //decltype(alloc2)::template rebind<test_type >::other alloc3;
    //int n = 10;
    //int nrepeat = 2;
-   int n = 10000000;
-   int nrepeat = 10;
+   int n = 1000000;
+   int nrepeat = 5;
    double* ptr;
    int size = 10000;
 
@@ -182,7 +204,7 @@ int main()
          }
       }
 
-      for(int i = 0; i < lol.size(); ++i)
+      for(std::size_t i = 0; i < lol.size(); ++i)
       {
          if(lol[i])
          {
