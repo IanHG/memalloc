@@ -124,7 +124,8 @@ using vector_type = std::vector<T, memalloc::mempool_allocator<T> >;
 
 int main()
 {
-   int vec_size = 100;
+   int vec_size = 10000;
+   int max_size = 10000;
    //std::cout << (void*)nullptr << std::endl;
    //vector_type<double> vec0;
    //{
@@ -146,7 +147,9 @@ int main()
 
    std::random_device rd;
    std::mt19937 gen(rd());
+   //std::mt19937 gen(0);
    std::uniform_int_distribution<> dis(0, vec_size - 1);
+   std::uniform_int_distribution<> dis_size(0, max_size - 1);
 
    //using test_type = test_lol<double>;
    using test_type = test_lol<double, memalloc::mempool_allocator<double> >;
@@ -159,6 +162,7 @@ int main()
    //int n = 10;
    //int nrepeat = 2;
    int n = 1000000;
+   //int n = 100;
    int nrepeat = 5;
    double* ptr;
    int size = 10000;
@@ -187,20 +191,44 @@ int main()
    
    for(int irepeat = 0; irepeat < nrepeat; ++irepeat)
    {
+      std::vector<double*> lol(vec_size, nullptr);
+      std::vector<int> lol_size(vec_size, -1);
       timer t;
       t.start();
-      std::vector<double*> lol(vec_size, nullptr);
       for(int i = 0; i < n; ++i)
       {
          auto random = dis(gen);
-         if(!lol[random])
+         auto random_size = dis_size(gen);
+         //random_size = 10;
+         //std::cout << "random " << random << std::endl;
+         //std::cout << "random size " << random_size << std::endl;
+         if(lol[random] == nullptr)
          {
-            lol[random] = alloc2.allocate(size);
+            lol_size[random] = random_size;
+            //std::cout << " ++++ allocating +++++ " << std::endl;
+            lol[random] = alloc2.allocate(lol_size[random]);
+            //std::cout << " lol pointer " << lol[random] << std::endl;
+            //std::cout << " lol size    " << lol_size[random] << std::endl;
+            //std::cout << " random_size " << random_size << std::endl;
+            //std::cout << " ++++ allocating end +++++ " << std::endl;
+            for(int j = 0; j < lol_size[random]; ++j)
+            {
+               //if(lol_size[random] == 844)
+               //{
+               //   std::cout << "j " << j << "   " << lol[random] + j << "  " << reinterpret_cast<uintptr_t>(lol[random] + j) << std::endl;
+               //   //std::cout << lol[random] + j << std::endl;
+               //}
+               //std::cout << j << std::endl;
+               lol[random][j] = 0x13371337;
+            }
          }
          else
          {
-            alloc2.deallocate(lol[random], size);
+            //std::cout << " ---- deallocating ---- " << std::endl;
+            alloc2.deallocate(lol[random], lol_size[random]);
             lol[random] = nullptr;
+            lol_size[random] = -1;
+            //std::cout << " ---- deallocating end ---- " << std::endl;
          }
       }
 
@@ -208,7 +236,7 @@ int main()
       {
          if(lol[i])
          {
-            alloc2.deallocate(lol[i], size);
+            alloc2.deallocate(lol[i], lol_size[i]);
          }
       }
       t.stop();
