@@ -7,8 +7,8 @@
 #include<algorithm>
 #include<memory>
 
-#define CHECK_MEMORY_CORRUPTION
-#define CHECK_BLOCKS_REACHABLE
+//#define CHECK_MEMORY_CORRUPTION
+//#define CHECK_BLOCKS_REACHABLE
 #define CACHELINE 64
 
 namespace memalloc
