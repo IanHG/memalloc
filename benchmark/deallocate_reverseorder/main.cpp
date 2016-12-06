@@ -35,7 +35,7 @@ int main(int argc, char* argv[])
    memalloc::ALLOCATOR<double> alloc2;
    
    // print header
-   std::cout << " Benchmark Butterfly : " << libmda::util::typeof<memalloc::ALLOCATOR<double> >() << std::endl;
+   std::cout << " Benchmark Deallocate reverse order : " << libmda::util::typeof<memalloc::ALLOCATOR<double> >() << std::endl;
 
    // loop over nrepeat
    for(int irepeat = 0; irepeat < nrepeat; ++irepeat)
