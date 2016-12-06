@@ -49,14 +49,15 @@ int main(int argc, char* argv[])
 
       auto dir = tokens[0];
       auto allocator = tokens[1];
-      auto commandline_options = tokens[2];
+      auto preprocessor = tokens[2];
+      auto commandline_options = tokens[3];
       
       // change dir
       return_value = chdir(dir.c_str());
       return_value = std::system("pwd");
 
       // compile benchmark test
-      std::string cc = cxx + " " + cxxflags + " -o main " + "-DALLOCATOR=" + allocator + " main.cpp " + libs;
+      std::string cc = cxx + " " + cxxflags + " -o main " + "-DALLOCATOR=" + allocator + " " + preprocessor + " main.cpp " + libs;
       std::cout << " CC: " << cc << std::endl;
       return_value = std::system(cc.c_str());
       if(return_value)

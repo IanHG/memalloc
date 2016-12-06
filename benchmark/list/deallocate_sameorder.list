@@ -1,0 +1,2 @@
+deallocate_sameorder;allocator;;-max 10000 -n 10000 -nrepeat 5
+deallocate_sameorder;mempool_allocator;;-max 10000 -n 10000 -nrepeat 5

@@ -1,0 +1,7 @@
+butterfly;mempool_allocator;-DCACHELINE=2;-vec 10000 -max 10000 -n 1000000 -nrepeat 5
+butterfly;mempool_allocator;-DCACHELINE=4;-vec 10000 -max 10000 -n 1000000 -nrepeat 5
+butterfly;mempool_allocator;-DCACHELINE=8;-vec 10000 -max 10000 -n 1000000 -nrepeat 5
+butterfly;mempool_allocator;-DCACHELINE=16;-vec 10000 -max 10000 -n 1000000 -nrepeat 5
+butterfly;mempool_allocator;-DCACHELINE=32;-vec 10000 -max 10000 -n 1000000 -nrepeat 5
+butterfly;mempool_allocator;-DCACHELINE=64;-vec 10000 -max 10000 -n 1000000 -nrepeat 5
+butterfly;mempool_allocator;-DCACHELINE=128;-vec 10000 -max 10000 -n 1000000 -nrepeat 5

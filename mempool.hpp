@@ -9,7 +9,14 @@
 
 //#define CHECK_MEMORY_CORRUPTION
 //#define CHECK_BLOCKS_REACHABLE
+
+#ifndef CACHELINE
 #define CACHELINE 64
+#endif /* CACHELINE */
+
+#ifndef MEMPOOLSIZE
+#define MEMPOOLSIZE 1024*1024*1024
+#endif /* MEMPOOLSIZE */
 
 namespace memalloc
 {
@@ -113,7 +120,7 @@ struct mempool_stat
 class mempool
 {
    private:
-      enum mempool_default { init_size = 1024*1024*32 };
+      enum mempool_default { init_size = MEMPOOLSIZE };
       mempool_stat m_stat;
       std::list<mempool_chunk> m_pool;
       mempool_chunk* m_last_allocate_chunk;
