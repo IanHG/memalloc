@@ -7,11 +7,11 @@
 
 #include "../commandline/commandline.hpp"
 
-#include "../../timer.hpp"
+#include "../../include/timer.hpp"
 #include "../../../../libmda/util/type_info.h"
 
 #define __gcc_header(x) #x
-#define _gcc_header(x) __gcc_header(../../x.hpp)
+#define _gcc_header(x) __gcc_header(../../include/x.hpp)
 #define gcc_header(x) _gcc_header(x)
 #include gcc_header(ALLOCATOR)
 
