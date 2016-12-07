@@ -28,4 +28,4 @@ main.x: $(OBJECTS)
 %.d: ;
 
 clean:
-	rm -f *core *.o *.d *.x
+	rm -f *core *.o *.d src/*.o src/*.d

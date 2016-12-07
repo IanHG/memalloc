@@ -23,7 +23,7 @@ int main(int argc, char* argv[])
    std::string str;
    std::string cxx = "g++";
    std::string cxxflags = "-Wall -O3 -std=c++14";
-   std::string libs = "../../../../libmda/lib/libmda.a ../../mempool.cpp";
+   std::string libs = "../../../../libmda/lib/libmda.a ../../src/mempool.cpp";
 
    bool cleanup = true;
    
@@ -33,6 +33,10 @@ int main(int argc, char* argv[])
    std::cout << "*================================================================*" << std::endl << std::endl;
    while(std::getline(ifs, str))
    {
+      // if line starts with '!' we skip the test
+      if(str[0] == '!') continue;
+      
+      // write test header
       std::cout << "******************************************************************" << std::endl;
       std::cout << "* " << str << std::endl;
       std::cout << "******************************************************************" << std::endl;

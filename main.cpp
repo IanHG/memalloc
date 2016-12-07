@@ -164,8 +164,8 @@ int main()
    int n = 1000000;
    //int n = 100;
    int nrepeat = 5;
-   double* ptr;
-   int size = 10000;
+   //double* ptr;
+   //int size = 10000;
 
    //std::cout << sizeof(test_none<>) << std::endl;
    //std::cout << sizeof(test_tp<>) << std::endl;
