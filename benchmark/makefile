@@ -27,4 +27,4 @@ run_benchmark.x: $(OBJECTS)
 %.d: ;
 
 clean:
-	rm -f *core *.o *.d *.x
+	rm -f *core *.o *.d

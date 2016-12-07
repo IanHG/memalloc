@@ -8,8 +8,9 @@ LIBS=../../libmda/lib/libmda.a
 # find source files
 SOURCEDIR := $(shell pwd)
 BUILDDIR := $(shell pwd)
-SOURCES := $(shell find $(SOURCEDIR) -name '*.cpp')
-OBJECTS := $(addprefix $(BUILDDIR)/,$(notdir $(SOURCES:.cpp=.o)))
+SOURCES := $(shell find $(SOURCEDIR) -path $(SOURCEDIR)/benchmark -prune -o -name '*.cpp' -print)
+#OBJECTS := $(addprefix $(BUILDDIR)/,$(notdir $(SOURCES:.cpp=.o)))
+OBJECTS := $(SOURCES:.cpp=.o)
 
 # link
 main.x: $(OBJECTS)
