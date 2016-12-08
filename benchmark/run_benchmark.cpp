@@ -13,7 +13,7 @@
 int main(int argc, char* argv[])
 {
    auto cc = commandline::parser()
-      .option<std::string>("benchmarkfile", "--file")
+      .option<std::string>("benchmarkfile", "-f")
       .parse(argc, argv)
       ;
 
@@ -34,7 +34,7 @@ int main(int argc, char* argv[])
    while(std::getline(ifs, str))
    {
       // if line starts with '!' we skip the test
-      if(str[0] == '!') continue;
+      if(str.empty() || str[0] == '!') continue;
       
       // write test header
       std::cout << "******************************************************************" << std::endl;

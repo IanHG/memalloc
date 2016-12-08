@@ -33,7 +33,7 @@ struct alignas(CACHELINE) mempool_block
    bool           m_free;
    std::size_t    m_size;
    mempool_block* m_prev;
-   void*          m_root;
+   //void*          m_root;
 #ifdef CHECK_MEMORY_CORRUPTION
    unsigned m_middle_magic;
 #endif /* CHECK_MEMORY_CORRUPTION */
@@ -58,7 +58,7 @@ inline std::ostream& operator<<(std::ostream& os, const mempool_block& b)
                      << std::endl;
    os << "    FREE " << b.m_free << std::endl;
    os << "    SIZE " << b.m_size << std::endl;
-   os << "    ROOT " << b.m_root << std::endl;
+   //os << "    ROOT " << b.m_root << std::endl;
 #ifdef CHECK_MEMORY_CORRUPTION
    os << "    MAG1 " << std::hex << b.m_front_magic << "   " << &b.m_front_magic << std::endl;
    os << "    MAG2 " << std::hex << b.m_middle_magic << "   " << &b.m_middle_magic << std::endl;
@@ -75,6 +75,7 @@ class mempool_chunk
    private:
       std::unique_ptr<char[]> m_chunk;
       mempool_block*  m_start_block;
+      void* m_end;
       mempool_block*  m_last_allocated_block;
       mempool_block*  m_last_deallocated_block;
       

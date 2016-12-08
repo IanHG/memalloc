@@ -115,7 +115,7 @@ mempool_chunk::mempool_chunk(std::size_t size)
    new_block->m_next = nullptr;
    new_block->m_free = true;
    new_block->m_size = size - sizeof(mempool_block);
-   new_block->m_root = reinterpret_cast<void*>( m_chunk.get() );
+   //new_block->m_root = reinterpret_cast<void*>( m_chunk.get() );
 #ifdef CHECK_MEMORY_CORRUPTION
    new_block->m_front_magic = MAGIC;
    new_block->m_middle_magic = MAGIC;
@@ -124,6 +124,7 @@ mempool_chunk::mempool_chunk(std::size_t size)
    m_start_block = new_block;
    m_last_allocated_block = new_block;
    m_last_deallocated_block = new_block;
+   m_end = static_cast<void*>(m_chunk.get() + size);
 }
 
 /**
@@ -131,8 +132,12 @@ mempool_chunk::mempool_chunk(std::size_t size)
  **/
 bool mempool_chunk::same_root(void* resource)
 {
-   mempool_block* block = reinterpret_cast<mempool_block*>(reinterpret_cast<char*>(resource) - sizeof(mempool_block));
-   return (block->m_root == m_start_block->m_root);
+   auto start_val = reinterpret_cast<uintptr_t>(m_start_block);
+   auto end_val   = reinterpret_cast<uintptr_t>(m_end);
+   auto ptr_val   = reinterpret_cast<uintptr_t>(resource);
+   return ptr_val >= start_val && ptr_val < end_val;
+   //mempool_block* block = reinterpret_cast<mempool_block*>(reinterpret_cast<char*>(resource) - sizeof(mempool_block));
+   //return (block->m_root == m_start_block->m_root);
 }
 
 /**
@@ -210,7 +215,7 @@ void* mempool_chunk::acquire(std::size_t size, void* hint)
       block->m_size = size;
       
       new_block->m_free = true;
-      new_block->m_root = block->m_root;
+      //new_block->m_root = block->m_root;
 #ifdef CHECK_MEMORY_CORRUPTION
       new_block->m_front_magic = MAGIC;
       new_block->m_middle_magic = MAGIC;

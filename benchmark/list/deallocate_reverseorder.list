@@ -1,2 +1,3 @@
 deallocate_reverseorder;allocator;;-max 10000 -n 10000 -nrepeat 5
 deallocate_reverseorder;mempool_allocator;-DCACHELINE=128;-max 10000 -n 10000 -nrepeat 5
+!deallocate_reverseorder;mempool_allocator;-DCACHELINE=128 -DCHECK_MEMORY_CORRUPTION -DCHECK_BLOCKS_REACHABLE;-max 10000 -n 10000 -nrepeat 5
