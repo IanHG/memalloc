@@ -3,8 +3,7 @@ CXXSTD=--std=c++14
 CXXOPTIMFLAGS=-O3 -g
 CXXDEBUGFLAGS=-g -O0 -rdynamic
 CXXFLAGS=-Wall $(CXXOPTIMFLAGS)
-LIBS=
-#LIBS=../../libmda/lib/libmda.a
+LIBS=../src/mempool.cpp
 
 # find source files
 SOURCEDIR := $(shell pwd)

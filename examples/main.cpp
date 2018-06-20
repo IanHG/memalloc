@@ -7,13 +7,13 @@
 
 //#include "../../libmda/util/stacktrace.h"
 
-#include "include/timer.hpp"
-#include "include/allocator.hpp"
-#include "include/allocatable.hpp"
-#include "include/mempool_allocator.hpp"
-#include "include/mempool_alloc_policy.hpp"
-#include "include/allocate_smart.hpp"
-#include "include/allocator_traits.hpp"
+#include "../include/timer.hpp"
+#include "../include/allocator.hpp"
+#include "../include/allocatable.hpp"
+#include "../include/mempool_allocator.hpp"
+#include "../include/mempool_alloc_policy.hpp"
+#include "../include/allocate_smart.hpp"
+#include "../include/allocator_traits.hpp"
 
 
 //template
