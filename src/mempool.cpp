@@ -85,6 +85,7 @@ bool mempool_chunk::check_reachable_from_start_block(mempool_block* block) const
    }
 
    std::cout << " START BLOCK : " << std::endl << *m_start_block << std::endl;
+   
    return false;
 }
 #endif /* CHECK_BLOCKS_REACHABLE */

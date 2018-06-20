@@ -1,5 +1,10 @@
-butterfly;mempool_allocator;-DMEMPOOL_SIZE=1024*1024;-vec 10000 -max 100000 -n 100000 -nrepeat 3
-butterfly;mempool_allocator;-DMEMPOOL_SIZE=1024*1024*128;-vec 10000 -max 100000 -n 100000 -nrepeat 3
-butterfly;mempool_allocator;-DMEMPOOL_SIZE=1024*1024*256;-vec 10000 -max 100000 -n 100000 -nrepeat 3
-butterfly;mempool_allocator;-DMEMPOOL_SIZE=1024*1024*512;-vec 10000 -max 100000 -n 100000 -nrepeat 3
-butterfly;mempool_allocator;-DMEMPOOL_SIZE=1024*1024*1024;-vec 10000 -max 100000 -n 100000 -nrepeat 3
+butterfly;mempool_allocator;-DMEMPOOLSIZE=1024*1024;-vec 10000 -max 10000 -n 100000 -nrepeat 3
+butterfly;mempool_allocator;-DMEMPOOLSIZE=1024*1024*128;-vec 10000 -max 10000 -n 100000 -nrepeat 3
+butterfly;mempool_allocator;-DMEMPOOLSIZE=1024*1024*256;-vec 10000 -max 10000 -n 100000 -nrepeat 3
+butterfly;mempool_allocator;-DMEMPOOLSIZE=1024*1024*512;-vec 10000 -max 10000 -n 100000 -nrepeat 3
+butterfly;mempool_allocator;-DMEMPOOLSIZE=1024*1024*1024;-vec 10000 -max 10000 -n 100000 -nrepeat 3
+butterfly;mempool_allocator;-DMEMPOOLSIZE=1024*1024;-vec 10000 -max 100 -n 100000 -nrepeat 3
+butterfly;mempool_allocator;-DMEMPOOLSIZE=1024*1024*128;-vec 10000 -max 100 -n 100000 -nrepeat 3
+butterfly;mempool_allocator;-DMEMPOOLSIZE=1024*1024*256;-vec 10000 -max 100 -n 100000 -nrepeat 3
+butterfly;mempool_allocator;-DMEMPOOLSIZE=1024*1024*512;-vec 10000 -max 100 -n 100000 -nrepeat 3
+butterfly;mempool_allocator;-DMEMPOOLSIZE=1024*1024*1024;-vec 10000 -max 100 -n 100000 -nrepeat 3

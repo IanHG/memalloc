@@ -8,7 +8,7 @@
 #include "../commandline/commandline.hpp"
 
 #include "../../include/timer.hpp"
-#include "../../../../libmda/util/type_info.h"
+#include "../type_info.h"
 
 #define __gcc_header(x) #x
 #define _gcc_header(x) __gcc_header(../../include/x.hpp)
@@ -38,7 +38,7 @@ int main(int argc, char* argv[])
    memalloc::ALLOCATOR<double> alloc2;
    
    // print header
-   std::cout << " Benchmark Butterfly : " << libmda::util::typeof<memalloc::ALLOCATOR<double> >() << std::endl;
+   std::cout << " Benchmark Butterfly : " << libmda::util::type_of<memalloc::ALLOCATOR<double> >() << std::endl;
 
    // loop over nrepeat
    for(int irepeat = 0; irepeat < nrepeat; ++irepeat)

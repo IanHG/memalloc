@@ -5,7 +5,7 @@
 #include <cassert>
 #include <random>
 
-#include "../../libmda/util/stacktrace.h"
+//#include "../../libmda/util/stacktrace.h"
 
 #include "include/timer.hpp"
 #include "include/allocator.hpp"

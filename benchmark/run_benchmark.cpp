@@ -23,7 +23,7 @@ int main(int argc, char* argv[])
    std::string str;
    std::string cxx = "g++";
    std::string cxxflags = "-Wall -O3 -std=c++14";
-   std::string libs = "../../../../libmda/lib/libmda.a ../../src/mempool.cpp";
+   std::string libs = "../type_info.cpp ../../src/mempool.cpp";
 
    bool cleanup = true;
    

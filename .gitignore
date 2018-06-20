@@ -4,5 +4,3 @@ a.out
 *.d
 *.o
 *.log
-
-benchmark/commandline
